@@ -144,7 +144,7 @@ export default function Nav() {
 				</IconButton>
 				<p>Notifications</p>
 				 </MenuItem> */}
-			{/* <MenuItem onClick={handleProfileMenuOpen}>
+			<MenuItem onClick={handleProfileMenuOpen}>
 				<IconButton
 					size='large'
 					aria-label='account of current user'
@@ -154,7 +154,7 @@ export default function Nav() {
 					<AccountCircle />
 				</IconButton>
 				<p>Profile</p>
-			</MenuItem> */}
+			</MenuItem>
 		</Menu>
 	);
 
@@ -198,6 +198,9 @@ export default function Nav() {
 									<ShoppingCartIcon />
 								</Badge>
 							</Link>
+						</Button>
+						<Button variant='contained' color='warning' disableElevation>
+							<Link to='/login'>Login</Link>
 						</Button>
 						{/* <IconButton
 							size='large'
