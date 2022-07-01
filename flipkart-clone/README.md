@@ -1,1 +1,3 @@
-Just Started Nothing Till Now
+Many things done
+Few remaning things
+Subtotal component not working as wanted
