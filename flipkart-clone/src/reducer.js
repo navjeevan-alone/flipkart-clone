@@ -5,6 +5,7 @@ export const ACTIONS = {
 	SET_TOTAL: "SET_TOTAL",
 	CHANGE_TOTAL: "CHANGE_TOTAL",
 	SET_USER: "SET_USER",
+	CREATE_USER: "CREATE_USER",
 };
 
 export const initialState = {
@@ -63,6 +64,7 @@ export const initialState = {
 	],
 	user: null,
 	total: 0,
+	isLoggedIn: false,
 };
 
 export const getBasketTotal = (basket) =>
@@ -105,6 +107,7 @@ const reducer = (state, action) => {
 
 		case ACTIONS.SET_USER:
 			return { ...state, user: action.user };
+
 		default:
 			return state;
 	}

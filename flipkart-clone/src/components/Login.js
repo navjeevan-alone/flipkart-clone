@@ -15,8 +15,9 @@ import {
 	createUserWithEmailAndPassword,
 	signInWithEmailAndPassword,
 } from "firebase/auth";
-
+import { useStateValue } from "../StateProvider";
 function Login() {
+	const [{ user }, dispatch] = useStateValue();
 	let navigate = useNavigate();
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
@@ -49,7 +50,17 @@ function Login() {
 		// 	alert(error.message);
 		// }
 	};
-
+	// lets try async and await :working great
+	const register = async (e) => {
+		e.preventDefault();
+		try {
+			const user = await createUserWithEmailAndPassword(auth, email, password);
+			navigate("/");
+			console.log(user);
+		} catch (error) {
+			console.log(error.message);
+		}
+	};
 	// login here
 	const handleLogin = (e) => {
 		e.preventDefault();
@@ -66,7 +77,7 @@ function Login() {
 				const errorMessage = error.message;
 			});
 	};
-	return (
+	return user === null ? (
 		<Paper
 			elevation={3}
 			sx={{
@@ -111,6 +122,7 @@ function Login() {
 					</Button> */}
 
 					<button type='submit'>Login</button>
+					<button onClick={register}>Login async</button>
 				</Grid>
 			</form>
 			<Divider mt={5}>
@@ -129,6 +141,8 @@ function Login() {
 			</Button>
 			{/* <CreateAccount /> */}
 		</Paper>
+	) : (
+		<h2>You are logged in</h2>
 	);
 }
 
