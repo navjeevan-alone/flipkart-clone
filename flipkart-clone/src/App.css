@@ -26,3 +26,7 @@ a{
 .css-zrrwn5-MuiGrid-root>.MuiGrid-item{
   padding-left: 0;
 }
+.flex-link{
+  display: flex;
+  align-items: center;
+}

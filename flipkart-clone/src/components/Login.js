@@ -2,56 +2,33 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
 	Button,
+	Box,
 	Grid,
 	Typography,
 	TextField,
 	Paper,
 	Divider,
 	Chip,
+	Container,
 } from "@mui/material";
 import { auth } from "../Firebase";
+import LogoutIcon from "@mui/icons-material/Logout";
 // import CreateAccount from "./CreateAccount";
 import {
 	createUserWithEmailAndPassword,
 	signInWithEmailAndPassword,
 } from "firebase/auth";
 import { useStateValue } from "../StateProvider";
+import { ACTIONS } from "../reducer";
 function Login() {
 	const [{ user }, dispatch] = useStateValue();
 	let navigate = useNavigate();
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
-	// const { createUserWithEmailAndPassword } = auth;
-	//register here
 
-	const handleRegister = (e) => {
-		e.preventDefault();
-		createUserWithEmailAndPassword(auth, email, password)
-			.then((userCredential) => {
-				// Signed in
-				const user = userCredential.user;
-				navigate("/");
-			})
-			.catch((error) => {
-				const errorCode = error.code;
-				const errorMessage = error.message;
-				alert(errorMessage);
-				// ..
-			});
-		// try {
-		// 	const user = await auth.createUserWithEmailAndPassword(
-		// 		auth,
-		// 		email,
-		// 		password
-		// 	);
-		// 	console.log(user);
-		// 	console.log("registered");
-		// } catch (error) {
-		// 	alert(error.message);
-		// }
-	};
+	//register here
 	// lets try async and await :working great
-	const register = async (e) => {
+	const handleRegister = async (e) => {
 		e.preventDefault();
 		try {
 			const user = await createUserWithEmailAndPassword(auth, email, password);
@@ -88,7 +65,7 @@ function Login() {
 				gap: "1rem",
 				width: "clamp(50vw,20rem,100vw)",
 			}}>
-			<form id='login' onSubmit={handleLogin}>
+			<form id='login'>
 				<Grid
 					container
 					direction='column'
@@ -117,12 +94,9 @@ function Login() {
 							setPassword(e.target.value);
 						}}
 					/>
-					{/* <Button variant='contained' color='warning'>
+					<Button variant='contained' color='warning' onClick={handleLogin}>
 						Login
-					</Button> */}
-
-					<button type='submit'>Login</button>
-					<button onClick={register}>Login async</button>
+					</Button>
 				</Grid>
 			</form>
 			<Divider mt={5}>
@@ -142,7 +116,39 @@ function Login() {
 			{/* <CreateAccount /> */}
 		</Paper>
 	) : (
-		<h2>You are logged in</h2>
+		<Container>
+			<Paper
+				sx={{
+					padding: "1rem 0",
+					display: "flex",
+					flexDirection: "column",
+					justifyContent: "center",
+					alignItems: "center",
+				}}>
+				<Typography
+					variant='h5'
+					fontWeight='500'
+					fontFamily='poppins'
+					textAlign='center'
+					margin={2}>
+					You are already logged in
+				</Typography>
+
+				<Button
+					variant='contained'
+					color='error'
+					startIcon={
+						<LogoutIcon
+							sx={{ marginRight: ".8rem" }}
+							onClick={() => {
+								dispatch({ type: ACTIONS.LOGOUT });
+							}}
+						/>
+					}>
+					Log out
+				</Button>
+			</Paper>
+		</Container>
 	);
 }
 

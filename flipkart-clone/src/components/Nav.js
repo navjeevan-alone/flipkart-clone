@@ -1,6 +1,6 @@
 import * as React from "react";
 import { styled, alpha } from "@mui/material/styles";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
 	AppBar,
 	Box,
@@ -13,6 +13,9 @@ import {
 	Menu,
 	Button,
 } from "@mui/material";
+import LocalOfferIcon from "@mui/icons-material/LocalOffer";
+import LogoutIcon from "@mui/icons-material/Logout";
+import PersonIcon from "@mui/icons-material/Person";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
 import AccountCircle from "@mui/icons-material/AccountCircle";
@@ -20,9 +23,12 @@ import MailIcon from "@mui/icons-material/Mail";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-
+import LoginIcon from "@mui/icons-material/Login";
 //our import
 import { useStateValue } from "../StateProvider";
+import { signOut } from "firebase/auth";
+import { auth } from "../Firebase";
+// app bar functions readonly
 const Search = styled("div")(({ theme }) => ({
 	position: "relative",
 	borderRadius: theme.shape.borderRadius,
@@ -53,7 +59,6 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 	color: "inherit",
 	"& .MuiInputBase-input": {
 		padding: theme.spacing(1, 1, 1, 0),
-		// vertical padding + font size from searchIcon
 		paddingLeft: `calc(1em + ${theme.spacing(4)})`,
 		transition: theme.transitions.create("width"),
 		width: "100%",
@@ -64,7 +69,18 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export default function Nav() {
-	const [{ basket }] = useStateValue();
+	const [{ basket, user }, dispatch] = useStateValue();
+	let navigate = useNavigate();
+	const handleLogout = async (e) => {
+		e.preventDefault();
+		try {
+			const user = await auth.signOut(auth);
+			navigate("/");
+			console.log(user);
+		} catch (error) {
+			console.log(error.message);
+		}
+	};
 	// mui code
 	const [anchorEl, setAnchorEl] = React.useState(null);
 	const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
@@ -89,7 +105,7 @@ export default function Nav() {
 		setMobileMoreAnchorEl(event.currentTarget);
 	};
 
-	const menuId = "primary-search-account-menu";
+	const menuId = "nav";
 	const renderMenu = (
 		<Menu
 			anchorEl={anchorEl}
@@ -105,8 +121,14 @@ export default function Nav() {
 			}}
 			open={isMenuOpen}
 			onClose={handleMenuClose}>
-			<MenuItem onClick={handleMenuClose}>Profile</MenuItem>
-			<MenuItem onClick={handleMenuClose}>My account</MenuItem>
+			{/* <MenuItem onClick={handleMenuClose}>
+				<PersonIcon sx={{ marginRight: ".8rem" }} />
+				<span>{user != null ? user.split("@")[0] : ""}</span>
+			</MenuItem>
+			<MenuItem onClick={handleMenuClose}>
+				<LogoutIcon sx={{ marginRight: ".8rem" }} />
+				<span>Log out</span>
+			</MenuItem> */}
 		</Menu>
 	);
 
@@ -127,34 +149,62 @@ export default function Nav() {
 			open={isMobileMenuOpen}
 			onClose={handleMobileMenuClose}>
 			<MenuItem>
-				<IconButton size='large' aria-label='show 4 new mails' color='inherit'>
-					<Badge badgeContent={4} color='error'>
-						<ShoppingCartIcon />
-					</Badge>
-				</IconButton>
-				<p>Messages</p>
+				<Link to='/products' className='flex-link'>
+					<IconButton
+						size='normal'
+						aria-label='show 4 new mails'
+						color='inherit'
+						sx={{ marginRight: ".6rem" }}>
+						<Badge>
+							<LocalOfferIcon />
+						</Badge>
+					</IconButton>
+					<p>Products</p>
+				</Link>
 			</MenuItem>
-			{/* <MenuItem>  <IconButton
-					size='large'
-					aria-label='show 17 new notifications'
-					color='inherit'>
-					<Badge badgeContent={17} color='error'>
-						<NotificationsIcon />
-					</Badge>
-				</IconButton>
-				<p>Notifications</p>
-				 </MenuItem> */}
-			<MenuItem onClick={handleProfileMenuOpen}>
-				<IconButton
-					size='large'
-					aria-label='account of current user'
-					aria-controls='primary-search-account-menu'
-					aria-haspopup='true'
-					color='inherit'>
+			<MenuItem>
+				<Link to='/cart' className='flex-link'>
+					<IconButton
+						size='normal'
+						aria-label='show 4 new mails'
+						color='inherit'
+						sx={{ marginRight: ".6rem" }}>
+						<Badge badgeContent={basket?.length} color='error'>
+							<ShoppingCartIcon />
+						</Badge>
+					</IconButton>
+					<p>Cart</p>
+				</Link>
+			</MenuItem>
+			<MenuItem>
+				<IconButton size='normal' color='inherit' sx={{ marginRight: ".6rem" }}>
 					<AccountCircle />
 				</IconButton>
-				<p>Profile</p>
+				<p>{user != null ? auth?.currentUser.email.split("@")[0] : "Guest"}</p>
 			</MenuItem>
+			{user != null ? (
+				<MenuItem onClick={handleLogout}>
+					<IconButton
+						size='normal'
+						color='inherit'
+						sx={{ marginRight: ".6rem" }}>
+						<LogoutIcon />
+					</IconButton>
+					<p>Log out</p>
+				</MenuItem>
+			) : (
+				<MenuItem>
+					<Link to='/login' className='flex-link'>
+						<IconButton
+							size='normal'
+							color='inherit'
+							sx={{ marginRight: ".6rem" }}>
+							<LoginIcon />
+						</IconButton>
+						<p>Log in</p>
+					</Link>
+				</MenuItem>
+			)}
 		</Menu>
 	);
 
@@ -192,42 +242,24 @@ export default function Nav() {
 						<Button variant='contained' disableElevation>
 							<Link to='/products'>Products</Link>
 						</Button>
-						<Button size='large' color='inherit'>
+						<Button size='normal' color='inherit'>
 							<Link to='/cart'>
 								<Badge badgeContent={basket?.length} color='error'>
 									<ShoppingCartIcon />
 								</Badge>
 							</Link>
 						</Button>
-						<Button variant='contained' color='warning' disableElevation>
-							<Link to='/login'>Login</Link>
-						</Button>
-						{/* <IconButton
-							size='large'
-							aria-label='show 17 new notifications'
-							color='inherit'>
-							<Badge badgeContent={1} color='error'>
-								<NotificationsIcon />
-							</Badge>
-						</IconButton> */}
-						{/* <Button variant='contained' disableElevation>
-							<Link to='/login'>Login</Link>
-						</Button> */}
-
-						{/* <IconButton
-							size='large'
-							edge='end'
-							aria-label='account of current user'
-							aria-controls={menuId}
-							aria-haspopup='true'
-							onClick={handleProfileMenuOpen}
-							color='inherit'>
-							<AccountCircle />
-						</IconButton> */}
+						{user === null ? (
+							<Button variant='contained' color='warning' disableElevation>
+								<Link to='/login'>Login</Link>
+							</Button>
+						) : (
+							""
+						)}
 					</Box>
-					{/* <Box sx={{ display: { xs: "flex", md: "none" } }}>
+					<Box sx={{ display: { xs: "flex", md: "flex" } }}>
 						<IconButton
-							size='large'
+							size='normal'
 							aria-label='show more'
 							aria-controls={mobileMenuId}
 							aria-haspopup='true'
@@ -235,7 +267,7 @@ export default function Nav() {
 							color='inherit'>
 							<MoreIcon />
 						</IconButton>
-					</Box> */}
+					</Box>
 				</Toolbar>
 			</AppBar>
 			{renderMobileMenu}

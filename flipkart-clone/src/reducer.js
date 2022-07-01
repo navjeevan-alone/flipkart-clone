@@ -1,4 +1,7 @@
 import { useEffect } from "react";
+import { auth } from "./Firebase";
+// import { useNavigate } from "react-router-dom";
+
 export const ACTIONS = {
 	ADD_TO_BASKET: "ADD_TO_BASKET",
 	REMOVE_FROM_BASKET: "REMOVE_FROM_BASKET",
@@ -6,6 +9,7 @@ export const ACTIONS = {
 	CHANGE_TOTAL: "CHANGE_TOTAL",
 	SET_USER: "SET_USER",
 	CREATE_USER: "CREATE_USER",
+	LOGOUT: "LOGOUT",
 };
 
 export const initialState = {
@@ -71,6 +75,7 @@ export const getBasketTotal = (basket) =>
 	basket?.reduce((amount, item) => item.price * item.quantity + amount, 0);
 
 const reducer = (state, action) => {
+	// let navigate = useNavigate();
 	switch (action.type) {
 		case ACTIONS.ADD_TO_BASKET:
 			return { ...state, basket: [...state.basket, action.item] };
@@ -107,7 +112,18 @@ const reducer = (state, action) => {
 
 		case ACTIONS.SET_USER:
 			return { ...state, user: action.user };
-
+		// case ACTIONS.LOGOUT:
+		// async (e) => {
+		// 	e.preventDefault();
+		// 	try {
+		// 		const user = await auth.signOut(auth);
+		// 		navigate("/");
+		// 		console.log(user);
+		// 	} catch (error) {
+		// 		console.log(error.message);
+		// 	}
+		// };
+		// return { ...state, user: null };
 		default:
 			return state;
 	}
