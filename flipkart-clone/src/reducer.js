@@ -4,6 +4,7 @@ export const ACTIONS = {
 	REMOVE_FROM_BASKET: "REMOVE_FROM_BASKET",
 	SET_TOTAL: "SET_TOTAL",
 	CHANGE_TOTAL: "CHANGE_TOTAL",
+	SET_USER: "SET_USER",
 };
 
 export const initialState = {
@@ -102,14 +103,8 @@ const reducer = (state, action) => {
 			}
 			return { ...state, basket: priceBasket };
 
-		// case ACTIONS.SET_TOTAL:
-		// 	let myTotal = 0;
-		// 	state.basket.forEach((product) => {
-		// 		myTotal += product.price * product.quantity;
-		// 	});
-
-		// 	return { ...state, total: myTotal };
-
+		case ACTIONS.SET_USER:
+			return { ...state, user: action.user };
 		default:
 			return state;
 	}

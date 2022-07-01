@@ -2,14 +2,30 @@ import "./App.css";
 import Nav from "./components/Nav";
 import CardsList from "./components/CardsList";
 import ProductPage from "./components/ProductPage";
-import MyAccordion from "./components/MyAccordion";
 import Checkout from "./components/Checkout";
 import Login from "./components/Login";
-import Counter from "./components/Counter";
-import Todo from "./components/Todo";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { Routes, Route } from "react-router-dom";
+import { useEffect } from "react";
+import { auth } from "./Firebase";
+import { ACTIONS } from "./reducer";
+import { useStateValue } from "./StateProvider";
+import { onAuthStateChanged } from "firebase/auth";
 function App() {
+	const [{ user }, dispatch] = useStateValue();
+	useEffect(() => {
+		const unsubscribe = auth.onAuthStateChanged((authUser) => {
+			if (authUser) {
+				dispatch({ type: ACTIONS.SET_USER, user: authUser });
+			} else {
+				dispatch({ type: ACTIONS.SET_USER, user: null });
+			}
+		});
+		return () => {
+			// any cleanup functions go on here
+			unsubscribe();
+		};
+	}, []);
+
 	return (
 		<div className='App'>
 			<Nav />
