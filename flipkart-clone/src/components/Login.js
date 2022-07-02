@@ -10,16 +10,18 @@ import {
 	Divider,
 	Chip,
 	Container,
+	ButtonGroup,
+	cardActionsClasses,
 } from "@mui/material";
-import { auth } from "../Firebase";
+import { auth } from "../firebase-config";
 import LogoutIcon from "@mui/icons-material/Logout";
-// import CreateAccount from "./CreateAccount";
 import {
 	createUserWithEmailAndPassword,
 	signInWithEmailAndPassword,
+	sendEmailVerification,
 } from "firebase/auth";
 import { useStateValue } from "../StateProvider";
-import { ACTIONS } from "../reducer";
+import { ACTIONS, errorType } from "../reducer";
 function Login() {
 	const [{ user }, dispatch] = useStateValue();
 	let navigate = useNavigate();
@@ -32,29 +34,52 @@ function Login() {
 		e.preventDefault();
 		try {
 			const user = await createUserWithEmailAndPassword(auth, email, password);
+			user.displayName = "chetan";
 			navigate("/");
-			console.log(user);
+			// console.log(user);
 		} catch (error) {
-			console.log(error.message);
+			const errorMessage = error.message;
+			const errorCode = error.code;
+			// console.log(error.message);
+			switch (errorMessage) {
+				case errorType.errorWeakPassword:
+					return alert("Password should be at least 6 characters ");
+				case errorType.errorInvalidEmail:
+					return alert("errorInvalidEmail");
+				case "Firebase: Error (auth/missing-email).":
+					return alert("Email is required");
+
+				case errorType.errorOffline:
+					return alert("Your device is offline! ");
+				case errorType.errorInternal:
+					return alert("Sorry, error from our side. Try again");
+				case errorType.errorEmailInUse:
+					return alert(
+						"Email is already in use.Login instead or try different email"
+					);
+
+				default:
+					return alert("You are logged in");
+			}
 		}
 	};
 	// login here
-	const handleLogin = (e) => {
+
+	const handleLogin = async (e) => {
 		e.preventDefault();
-		signInWithEmailAndPassword(auth, email, password)
-			.then((userCredential) => {
-				// Signed in
-				const user = userCredential.user;
-				navigate("/");
-				console.log(user.email, "logged in successfully");
-				// ...
-			})
-			.catch((error) => {
-				const errorCode = error.code;
-				const errorMessage = error.message;
-			});
+		try {
+			// try signing in
+			const loginUser = await signInWithEmailAndPassword(auth, email, password);
+			// ...rest of logic if neccessary
+			navigate("/");
+			console.log(user.email, "logged in successfully");
+		} catch (error) {
+			// catch error if there is
+			alert(error.message + "  " + error.code);
+		}
 	};
-	return user === null ? (
+
+	return user == null ? (
 		<Paper
 			elevation={3}
 			sx={{
@@ -94,26 +119,19 @@ function Login() {
 							setPassword(e.target.value);
 						}}
 					/>
-					<Button variant='contained' color='warning' onClick={handleLogin}>
-						Login
-					</Button>
+					<div className='btn-group-login'>
+						<Button variant='contained' color='warning' onClick={handleLogin}>
+							Login
+						</Button>
+						<Divider orientaion='verticle'>
+							<Chip label='OR' />
+						</Divider>
+						<Button variant='outlined' color='warning' onClick={handleRegister}>
+							Sign Up
+						</Button>
+					</div>
 				</Grid>
 			</form>
-			<Divider mt={5}>
-				<Chip label='OR' />
-			</Divider>
-			<Button
-				variant='outlined'
-				color='warning'
-				sx={{
-					margin: "1rem auto",
-					display: "block",
-					width: "20rem",
-				}}
-				onClick={handleRegister}>
-				Create Account
-			</Button>
-			{/* <CreateAccount /> */}
 		</Paper>
 	) : (
 		<Container>
@@ -140,9 +158,8 @@ function Login() {
 					startIcon={
 						<LogoutIcon
 							sx={{ marginRight: ".8rem" }}
-							onClick={() => {
-								dispatch({ type: ACTIONS.LOGOUT });
-							}}
+							// onClick={logoutReducer}
+							// not working try to fix
 						/>
 					}>
 					Log out

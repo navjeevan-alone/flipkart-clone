@@ -27,7 +27,7 @@ import LoginIcon from "@mui/icons-material/Login";
 //our import
 import { useStateValue } from "../StateProvider";
 import { signOut } from "firebase/auth";
-import { auth } from "../Firebase";
+import { auth } from "../firebase-config";
 // app bar functions readonly
 const Search = styled("div")(({ theme }) => ({
 	position: "relative",
@@ -76,9 +76,9 @@ export default function Nav() {
 		try {
 			const user = await auth.signOut(auth);
 			navigate("/");
-			console.log(user);
+			// console.log(user);
 		} catch (error) {
-			console.log(error.message);
+			alert(error.message);
 		}
 	};
 	// mui code

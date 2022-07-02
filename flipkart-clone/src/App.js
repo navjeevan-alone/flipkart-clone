@@ -6,23 +6,32 @@ import Checkout from "./components/Checkout";
 import Login from "./components/Login";
 import { Routes, Route } from "react-router-dom";
 import { useEffect } from "react";
-import { auth } from "./Firebase";
+import { auth } from "./firebase-config";
 import { ACTIONS } from "./reducer";
 import { useStateValue } from "./StateProvider";
 import { onAuthStateChanged } from "firebase/auth";
 function App() {
 	const [{ user }, dispatch] = useStateValue();
 	useEffect(() => {
-		const unsubscribe = auth.onAuthStateChanged((authUser) => {
-			// console.log(authUser);
+		const unsubscribe = onAuthStateChanged(auth, (authUser) => {
 			if (authUser) {
+				const uid = authUser.id;
 				dispatch({ type: ACTIONS.SET_USER, user: authUser });
 			} else {
 				dispatch({ type: ACTIONS.SET_USER, user: null });
 			}
+
+			// if (auth.currentUser !== null) {
+			// 	auth.currentUser.providerData.forEach((profile) => {
+			// 		console.log("Sign-in provider: " + profile.providerId);
+			// 		console.log("  Provider-specific UID: " + profile.uid);
+			// 		console.log("  Name: " + profile.displayName);
+			// 		console.log("  Email: " + profile.email);
+			// 		console.log("  Photo URL: " + profile.photoURL);
+			// 	});
+			// }
 		});
 		return () => {
-			// any cleanup functions go on here
 			unsubscribe();
 		};
 	}, []);

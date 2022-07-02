@@ -1,5 +1,6 @@
 import { useEffect } from "react";
-import { auth } from "./Firebase";
+import { auth } from "./firebase-config";
+import { signOut } from "firebase/auth";
 // import { useNavigate } from "react-router-dom";
 
 export const ACTIONS = {
@@ -11,7 +12,17 @@ export const ACTIONS = {
 	CREATE_USER: "CREATE_USER",
 	LOGOUT: "LOGOUT",
 };
-
+export const errorType = {
+	errorWeakPassword: "(auth/weak-password)",
+	// errorWeakPassword:
+	// 	"Firebase: Password should be at least 6 characters (auth/weak-password).",
+	errorInvalidEmail: "Firebase: Error (auth/invalid-email).",
+	errorMissingEmail: " Firebase: Error (auth/missing-email).",
+	errorOffline: "Firebase: Error (auth/network-request-failed).",
+	errorInternal: "Firebase: Error (auth/internal-error).",
+	errorEmailInUse: "Firebase: Error (auth/email-already-in-use).",
+	// error: "",
+};
 export const initialState = {
 	basket: [],
 	products: [
@@ -112,18 +123,20 @@ const reducer = (state, action) => {
 
 		case ACTIONS.SET_USER:
 			return { ...state, user: action.user };
-		// case ACTIONS.LOGOUT:
-		// async (e) => {
-		// 	e.preventDefault();
-		// 	try {
-		// 		const user = await auth.signOut(auth);
-		// 		navigate("/");
-		// 		console.log(user);
-		// 	} catch (error) {
-		// 		console.log(error.message);
-		// 	}
-		// };
-		// return { ...state, user: null };
+			// case ACTIONS.LOGOUT:
+			// 	// signOut(auth);
+			// 	const logout = async (e) => {
+			// 		e.preventDefault();
+			// 		try {
+			// 			const user = await auth.signOut(auth);
+
+			// 			// console.log(user);
+			// 		} catch (error) {
+			// 			// console.log(error.message);
+			// 			alert("can not logout", error.message);
+			// 		}
+			// 	};
+			return { ...state, user: null };
 		default:
 			return state;
 	}
