@@ -49,10 +49,8 @@ function MyAccordion({ summary, details }) {
 				{/* <Typography>This is summayr</Typography> */}
 			</AccordionSummary>
 			<AccordionDetails>
-				<Typography>
-					{/* <Details /> */}
-					{details}
-				</Typography>
+				{/* <Details /> */}
+				{details}
 			</AccordionDetails>
 		</Accordion>
 	);

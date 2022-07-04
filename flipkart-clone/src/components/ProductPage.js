@@ -1,15 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import {
-	Button,
-	Box,
-	Container,
-	Rating,
-	Typography,
-	Grid,
-} from "@mui/material";
+import { Button, Box, Paper, Rating, Typography, Grid } from "@mui/material";
 import MyAccordion from "./MyAccordion";
+import ToggleAddToCart from "./ToggleAddToCart";
+import { Link, useLocation } from "react-router-dom";
 function Details() {
 	const detailsListItems = [
 		"6.51 Inch 16.5cm HD+ Puch-hole Display with 1600x720 pixels. Larger screen to body ratio of 89.2 %.Side Fingerprint Sensor",
@@ -21,83 +16,54 @@ function Details() {
 	];
 	return (
 		<ul className='details-list'>
-			{detailsListItems.map((detail) => {
-				return <li>{detail}</li>;
+			{detailsListItems.map((detail, index) => {
+				return <li key={index}>{detail}</li>;
 			})}
 		</ul>
 	);
 }
 
 function ProductPage() {
+	const [isAdded, setIsAdded] = useState(false);
+	const location = useLocation();
+	const { getProductData } = location.state;
+	// console.log(getProductData);
+	// getProductData.property we want will have required data
 	return (
-		<Container
-			maxWidth='lg'
-			sx={{
-				margin: "0 auto",
-				padding: "1rem .5rem",
-				background: "white",
-				flexGrow: 1,
-			}}>
-			<Grid
-				className='product-page-grid'
-				container
-				spacing={2}
-				columns={{ xs: 4, sm: 8, md: 12 }}>
-				<Grid
-					item
-					xs={4}
-					pt={0}
-					pl={0}
-					// border={1}
+		<div className='product-page-grid'>
+			<div className='prodocut-image'>
+				<img
+					src={getProductData.image}
+					alt={getProductData.title}
 					sx={{
-						display: "grid",
-						placeItems: "center",
-					}}>
-					<img
-						src='img/phone.jpg'
-						alt=''
-						sx={{
-							objectFit: "cover",
-							maxHeight: "15rem",
-							width: 118,
-							margin: 0,
-						}}></img>
-				</Grid>
-				<Grid item xs sx={{ padding: 0 }}>
-					<Typography variant='p'>Category: Electronics</Typography>
-					<Typography variant='h5'>
-						Oppo A54 (Starry Blue, 4GB RAM, 64GB Storage) with No Cost EMI &
-						Additional Exchange Offers
+						objectFit: "contain",
+						width: "100%",
+						// width: 118,
+						margin: 0,
+					}}></img>
+			</div>
+			<div className='product-details'>
+				{/* <Typography variant='p'>Category: Electronics</Typography> */}
+				<Typography variant='h5'>{getProductData.title}</Typography>
+				<Rating
+					value={getProductData.rating}
+					precision={0.1}
+					readOnly
+					size='normal'
+				/>
+				<Box display='flex' alignItems='center' gap='1rem'>
+					<Typography variant='p'>Price : </Typography>
+					<Typography variant='h4'>
+						<sup>₹</sup>
+						{getProductData.price}
 					</Typography>
-					<Rating value={3.3} precision={0.1} readOnly size='large' />
-					<Box display='flex' alignItems='center' gap='1rem'>
-						<Typography variant='p'>Price : </Typography>
-						<Typography variant='h4'>
-							<sup>₹</sup> 150
-						</Typography>
-					</Box>
-					<MyAccordion summary='Specifications' details={<Details />} />
-					<Box display='flex' mt={1}>
-						<Button
-							variant='contained'
-							color='warning'
-							size='medium'
-							disableElevation
-							startIcon={<ShoppingCartIcon />}>
-							Add to Cart
-						</Button>
-						{/* <Button
-							variant='outlined'
-							size='medium'
-							color='error'
-							disableElevation
-							startIcon={<DeleteForeverIcon />}>
-							Remove item
-						</Button> */}
-					</Box>
-				</Grid>
-			</Grid>
-		</Container>
+				</Box>
+				<ToggleAddToCart />
+				{/* <MyAccordion summary='Specifications' details={<Details />} /> */}
+			</div>
+		</div>
+
+		// </Container>
 	);
 }
 

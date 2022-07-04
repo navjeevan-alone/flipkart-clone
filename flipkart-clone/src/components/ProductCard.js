@@ -16,14 +16,23 @@ import { Link } from "react-router-dom";
 import { useStateValue } from "../StateProvider";
 import { ACTIONS } from "../reducer";
 export default function ProductCard({
-	id,
 	title,
+	id,
 	image,
 	rating,
 	price,
 	isInCart,
 	quantity,
 }) {
+	const productData = {
+		title,
+		id,
+		image,
+		rating,
+		price,
+		isInCart,
+		quantity,
+	};
 	const [{ basket }, dispatch] = useStateValue();
 	const [itemQuantity, setItemQuantity] = useState(0);
 	const [isAdded, setIsAdded] = useState(false);
@@ -52,7 +61,7 @@ export default function ProductCard({
 				justifyContent: "space-between",
 			}}>
 			<CardActionArea>
-				<Link to={`/products/${id}`}>
+				<Link to={`/products/${id}`} state={{ getProductData: productData }}>
 					<CardMedia
 						objectfit='contain'
 						component='img'

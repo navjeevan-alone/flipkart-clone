@@ -1,17 +1,31 @@
+import { useEffect } from "react";
 import "./App.css";
 import Nav from "./components/Nav";
 import CardsList from "./components/CardsList";
 import ProductPage from "./components/ProductPage";
 import Checkout from "./components/Checkout";
 import Login from "./components/Login";
+import TodoApp from "./todoApp/TodoApp";
+//
 import { Routes, Route } from "react-router-dom";
-import { useEffect } from "react";
 import { auth } from "./firebase-config";
 import { ACTIONS } from "./reducer";
 import { useStateValue } from "./StateProvider";
 import { onAuthStateChanged } from "firebase/auth";
+import {
+	collection,
+	addDoc,
+	getDocs,
+	query,
+	onSnapshot,
+	doc,
+	updateDoc,
+	deleteDoc,
+} from "firebase/firestore";
+import { db } from "./firebase-config";
+
 function App() {
-	const [{ user }, dispatch] = useStateValue();
+	const [{ user, products }, dispatch] = useStateValue();
 	useEffect(() => {
 		const unsubscribe = onAuthStateChanged(auth, (authUser) => {
 			if (authUser) {
@@ -20,19 +34,18 @@ function App() {
 			} else {
 				dispatch({ type: ACTIONS.SET_USER, user: null });
 			}
-
-			// if (auth.currentUser !== null) {
-			// 	auth.currentUser.providerData.forEach((profile) => {
-			// 		console.log("Sign-in provider: " + profile.providerId);
-			// 		console.log("  Provider-specific UID: " + profile.uid);
-			// 		console.log("  Name: " + profile.displayName);
-			// 		console.log("  Email: " + profile.email);
-			// 		console.log("  Photo URL: " + profile.photoURL);
-			// 	});
-			// }
+		});
+		const q = query(collection(db, "products"));
+		const getProducts = onSnapshot(q, (querySnapshot) => {
+			let productsArray = [];
+			querySnapshot.forEach((doc) => {
+				productsArray.push({ ...doc.data(), id: doc.id });
+			});
+			dispatch({ type: ACTIONS.SET_PRODCUTS, products: productsArray });
 		});
 		return () => {
 			unsubscribe();
+			getProducts();
 		};
 	}, []);
 
@@ -40,12 +53,12 @@ function App() {
 		<div className='App'>
 			<Nav />
 			<Routes>
-				{/* <Route path='/' element={<CardsList />} /> */}
 				<Route path='/' element={<CardsList />} />
 				<Route path='/products/:id' element={<ProductPage />} />
 				<Route path='/products' element={<CardsList />} />
 				<Route path='/cart' element={<Checkout />} />
 				<Route path='/Login' element={<Login />} />
+				<Route path='/todo' element={<TodoApp />} />
 			</Routes>
 			{/* <Counter /> */}
 			{/* <Todo></Todo> */}
