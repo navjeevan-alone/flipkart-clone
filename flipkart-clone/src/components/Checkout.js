@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
 	Paper,
 	Stack,
@@ -7,31 +7,26 @@ import {
 	Button,
 	Container,
 	Divider,
+	IconButton,
 } from "@mui/material";
 import { Link } from "react-router-dom";
-
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import CheckoutItem from "./CheckoutItem";
 import Subtotal from "./Subtotal";
 import { useStateValue } from "../StateProvider";
-function EmptyBasket() {
-	return (
-		<div>
-			<Typography variant='h5' as='h3'>
-				Your Cart is empty.
-			</Typography>
-			<Typography variant='p' as='p'>
-				Do some shopping my friend. <br /> let us have profits!
-			</Typography>
-			<span>Go to</span>
-			<Button>
-				<Link to='/products'>Products</Link>
-			</Button>
-		</div>
-	);
-}
+import { db } from "../firebase-config";
+import { collection, where, query, onSnapshot } from "firebase/firestore";
+import { ACTIONS } from "../reducer";
 function Checkout() {
-	const [{ basket }, dispatch] = useStateValue();
-
+	const [basket, setBasket] = useState([]);
+	const q = query(collection(db, "products"), where("isInCart", "==", true));
+	onSnapshot(q, (snapshot) => {
+		let newBasket = [];
+		snapshot.docs.forEach((doc) => {
+			newBasket.push({ ...doc.data(), id: doc.id });
+		});
+		setBasket(newBasket);
+	});
 	return (
 		<Container sx={{ borderRadius: "0 0 4px 4px" }}>
 			<Paper p='.5rem' elevation={0} sx={{ borderRadius: "4px 4px 0 0" }}>
@@ -41,12 +36,14 @@ function Checkout() {
 					justifyContent='space-between'
 					p='0 .5rem'
 					sx={{ margin: "0 0" }}>
+					<Link to='/'>
+						<IconButton aria-label='link'>
+							<ArrowBackIosIcon />
+						</IconButton>
+					</Link>
 					<Typography variant='h6' sx={{ fontWeight: "bold" }} p='.5rem 0'>
 						Shopping Cart
 					</Typography>
-					{/* <Typography variant='p' sx={{ fontWeight: "normal" }} p='.5rem 0'>
-						Price
-					</Typography> */}
 				</Stack>
 				<Divider></Divider>
 			</Paper>
@@ -86,3 +83,19 @@ function Checkout() {
 }
 
 export default Checkout;
+function EmptyBasket() {
+	return (
+		<div>
+			<Typography variant='h5' as='h3'>
+				Your Cart is empty.
+			</Typography>
+			<Typography variant='p' as='p'>
+				Do some shopping my friend. <br /> let us have profits!
+			</Typography>
+			<span>Go to</span>
+			<Button>
+				<Link to='/products'>Products</Link>
+			</Button>
+		</div>
+	);
+}

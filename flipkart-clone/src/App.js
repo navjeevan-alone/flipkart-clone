@@ -6,26 +6,18 @@ import ProductPage from "./components/ProductPage";
 import Checkout from "./components/Checkout";
 import Login from "./components/Login";
 import TodoApp from "./todoApp/TodoApp";
+import AddProduct from "./components/AddProduct";
+import NewCheckout from "./components/NewCheckout";
 //
 import { Routes, Route } from "react-router-dom";
 import { auth } from "./firebase-config";
-import { ACTIONS } from "./reducer";
+import { ACTIONS, getProducts } from "./reducer";
 import { useStateValue } from "./StateProvider";
 import { onAuthStateChanged } from "firebase/auth";
-import {
-	collection,
-	addDoc,
-	getDocs,
-	query,
-	onSnapshot,
-	doc,
-	updateDoc,
-	deleteDoc,
-} from "firebase/firestore";
-import { db } from "./firebase-config";
 
 function App() {
-	const [{ user, products }, dispatch] = useStateValue();
+	const [{ products, user }, dispatch] = useStateValue();
+
 	useEffect(() => {
 		const unsubscribe = onAuthStateChanged(auth, (authUser) => {
 			if (authUser) {
@@ -35,17 +27,10 @@ function App() {
 				dispatch({ type: ACTIONS.SET_USER, user: null });
 			}
 		});
-		const q = query(collection(db, "products"));
-		const getProducts = onSnapshot(q, (querySnapshot) => {
-			let productsArray = [];
-			querySnapshot.forEach((doc) => {
-				productsArray.push({ ...doc.data(), id: doc.id });
-			});
-			dispatch({ type: ACTIONS.SET_PRODCUTS, products: productsArray });
-		});
+
 		return () => {
 			unsubscribe();
-			getProducts();
+			// getProducts();
 		};
 	}, []);
 
@@ -59,7 +44,10 @@ function App() {
 				<Route path='/cart' element={<Checkout />} />
 				<Route path='/Login' element={<Login />} />
 				<Route path='/todo' element={<TodoApp />} />
+				<Route path='/add-product' element={<AddProduct />} />
+				<Route path='/new-checkout' element={<NewCheckout />} />
 			</Routes>
+			{/* <AddProduct /> */}
 			{/* <Counter /> */}
 			{/* <Todo></Todo> */}
 		</div>

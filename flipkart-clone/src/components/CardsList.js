@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import ProductCard from "./ProductCard";
 import { useStateValue } from "../StateProvider";
 
@@ -11,7 +11,9 @@ import {
 	Button,
 } from "@mui/material";
 function CardsList() {
+	// const [loading, setLoading] = useState(true);
 	const [{ products }] = useStateValue();
+
 	return (
 		<Container
 			maxWidth='lg'
@@ -29,9 +31,6 @@ function CardsList() {
 					<Typography variant='h6' sx={{ fontWeight: "bold" }} p='.5rem 0'>
 						Products
 					</Typography>
-					{/* <Button variant='contained' size='small' sx={{ height: "50" }}>
-						View More
-					</Button> */}
 				</Stack>
 			</Card>
 

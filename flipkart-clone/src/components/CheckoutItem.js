@@ -32,7 +32,7 @@ function CheckoutItem({ id, title, image, price, isInCart }) {
 	return (
 		<>
 			<Grid
-				className='product-page-grid'
+				className='checkout-page-grid'
 				container
 				spacing={2}
 				mt={2}
@@ -43,6 +43,7 @@ function CheckoutItem({ id, title, image, price, isInCart }) {
 					xs={3}
 					p={0}
 					className='grid-item'
+					disableElevation
 					sx={{
 						display: "grid",
 						placeItems: "center",
@@ -64,27 +65,28 @@ function CheckoutItem({ id, title, image, price, isInCart }) {
 					display='flex'
 					direction='column'
 					alignItems='flex-start'>
-					<Typography variant='p' fontWeight='500' fontSize='1.2rem'>
+					<Typography variant='p' fontWeight='400' fontSize='1.1rem'>
 						{title}
 					</Typography>
-					<FormControl sx={{ margin: ".5rem 0", minWidth: 120 }} size='small'>
-						<InputLabel id='demo-select-small'>Quantity</InputLabel>
-						<Select
-							labelId='quantity'
-							id='quantity'
-							value={quantity}
-							label='Quantity'
-							onChange={handleChange}>
-							{Array.from([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], (item) => {
-								return (
-									<MenuItem value={item} key={item}>
-										{item}
-									</MenuItem>
-								);
-							})}
-						</Select>
-					</FormControl>
-					<Box display='flex' alignItems='flex-end' mt={1}>
+					<Box display='flex' alignItems='center ' gap={3} mt={1}>
+						<FormControl sx={{ margin: ".5rem 0", minWidth: 120 }} size='small'>
+							<InputLabel>Quantity</InputLabel>
+							<Select
+								labelId='quantity'
+								id='quantity'
+								value={quantity}
+								label='Quantity'
+								onChange={handleChange}>
+								{Array.from([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], (item) => {
+									return (
+										<MenuItem value={item} key={item}>
+											{item}
+										</MenuItem>
+									);
+								})}
+							</Select>
+						</FormControl>
+
 						<Button
 							onClick={handleRemoveItem}
 							variant='contained'
@@ -99,7 +101,9 @@ function CheckoutItem({ id, title, image, price, isInCart }) {
 					display='flex'
 					alignItems='flex-start'
 					direction='column'
-					gap='1rem'>
+					gap='1rem'
+					justifySelf='center'
+					ml={2}>
 					<Typography variant='subtitle1' fontWeight='bold' fontSize='1.5rem'>
 						<sup>₹</sup>
 						{price * quantity}

@@ -15,6 +15,8 @@ import {
 import { Link } from "react-router-dom";
 import { useStateValue } from "../StateProvider";
 import { ACTIONS } from "../reducer";
+import { collection, updateDoc, doc, getDoc } from "firebase/firestore";
+import { db } from "../firebase-config";
 export default function ProductCard({
 	title,
 	id,
@@ -36,9 +38,27 @@ export default function ProductCard({
 	const [{ basket }, dispatch] = useStateValue();
 	const [itemQuantity, setItemQuantity] = useState(0);
 	const [isAdded, setIsAdded] = useState(false);
-	const addToBasket = () => {
+
+	const getData = async () => {
+		try {
+			const docRef = doc(db, "products", id);
+			const docSnap = await getDoc(docRef);
+			if (docSnap.exists()) {
+				return setIsAdded(docSnap.data().isInCart, id);
+			}
+		} catch (error) {
+			console.log("document dosent exist");
+		}
+	};
+	// getData();
+	useEffect(() => {
+		return () => getData();
+	}, []);
+	const addToBasket = async () => {
 		setItemQuantity(itemQuantity + 1);
 		setIsAdded(true);
+
+		handleCart();
 		dispatch({
 			type: ACTIONS.ADD_TO_BASKET,
 			item: {
@@ -51,6 +71,16 @@ export default function ProductCard({
 				quantity: 1,
 			},
 		});
+	};
+	const handleCart = async () => {
+		try {
+			await updateDoc(doc(db, "products", id), {
+				isInCart: !isInCart,
+				quantity: 1,
+			});
+		} catch (error) {
+			alert(error.message);
+		}
 	};
 	return (
 		<Card
@@ -94,6 +124,7 @@ export default function ProductCard({
 						onClick={() => {
 							dispatch({ type: ACTIONS.REMOVE_FROM_BASKET, id: id });
 							setIsAdded(false);
+							handleCart();
 						}}
 						variant='outlined'
 						size='small'

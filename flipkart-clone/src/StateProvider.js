@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useReducer } from "react";
-import { reducer } from "./reducer";
 export const StateContext = createContext();
 export const StateProvider = ({ reducer, initialState, children }) => {
 	return (

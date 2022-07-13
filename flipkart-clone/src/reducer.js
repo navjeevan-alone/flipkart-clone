@@ -1,6 +1,8 @@
 import { useEffect } from "react";
-import { auth } from "./firebase-config";
+import { auth, db } from "./firebase-config";
 import { signOut } from "firebase/auth";
+import { collection, query, where, onSnapshot } from "firebase/firestore";
+
 // import { useNavigate } from "react-router-dom";
 
 export const ACTIONS = {
@@ -9,6 +11,7 @@ export const ACTIONS = {
 	SET_TOTAL: "SET_TOTAL",
 	CHANGE_TOTAL: "CHANGE_TOTAL",
 	SET_USER: "SET_USER",
+	SET_BASKET: "SET_BASKET",
 	CREATE_USER: "CREATE_USER",
 	LOGOUT: "LOGOUT",
 };
@@ -85,7 +88,26 @@ export const initialState = {
 
 export const getBasketTotal = (basket) =>
 	basket?.reduce((amount, item) => item.price * item.quantity + amount, 0);
-
+//
+const productsQuery = query(collection(db, "products"));
+export const getProducts = onSnapshot(productsQuery, (snapshot) => {
+	let productsArray = [];
+	snapshot.forEach((doc) => {
+		productsArray.push({ ...doc.data(), id: doc.id });
+	});
+	console.log(productsArray);
+	return { ...initialState, products: [...productsArray] };
+});
+getProducts();
+// get added products from firestore and change empty basket array
+const q = query(collection(db, "products"), where("isInCart", "==", true));
+onSnapshot(q, (snapshot) => {
+	let newBasket = [];
+	snapshot.docs.forEach((doc) => {
+		newBasket.push({ ...doc.data(), id: doc.id });
+	});
+	return { ...initialState, basket: [...newBasket] };
+});
 const reducer = (state, action) => {
 	// let navigate = useNavigate();
 	switch (action.type) {

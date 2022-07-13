@@ -10,18 +10,21 @@
 	--red: #d32f2f;
 	--blue: #1e88e5;
 }
-.todo-app * {
+/*.todo-app*/
+* {
 	margin: 0;
 	padding: 0;
 	font-family: "poppins", sans-serif;
 	transition: 0.15s;
 	box-sizing: border-box;
 }
-.todo-app *:hover,
-.todo-app *:focus {
+/*.todo-app*/
+*:hover,
+/*.todo-app*/ *:focus {
 	outline: none;
 }
-.todo-app {
+.todo-app,
+.addProduct-form {
 	background: #fff;
 	max-width: 768px;
 	margin: 1rem auto;
@@ -48,14 +51,17 @@
 .inner-container > * {
 	width: 100%;
 }
-.todo-app .addtodo-form {
+/*.todo-app*/
+.addtodo-form {
 	display: flex;
 	gap: 1rem;
 	justify-content: space-between;
 	align-items: stretch;
 	height: 2.5rem;
 }
-.todo-app input[type="text"] {
+/*.todo-app*/
+.inner-container input[type="text"],
+.inp {
 	width: -webkit-fill-available;
 	height: 100%;
 	padding: 0 0.8rem;
@@ -63,11 +69,14 @@
 	outline: none;
 	border: 1px solid #ccc;
 	border-radius: var(--round);
+	min-height: 2.5rem;
 }
-.todo-app input[type="text"]:hover {
+/*.todo-app*/
+input[type="text"]:hover {
 	border-color: var(--purple);
 }
-.todo-app button {
+.todo-app button,
+.addProduct-form button {
 	background: var(--purple);
 	border: none;
 	padding: 0.3rem;
@@ -75,11 +84,14 @@
 	border-radius: var(--round);
 	cursor: pointer;
 }
-.todo-app button.add-btn {
+/*.todo-app*/
+button.add-btn {
 	padding: 0.5rem 1.2rem;
 	font-size: 1.1rem;
+	max-width: fit-content;
 }
-.todo-app button.add-btn:hover {
+/*.todo-app*/
+button.add-btn:hover .addProduct-form button:hover {
 	background: var(--purple-dark);
 }
 .todo-app button:hover {

@@ -1,4 +1,4 @@
-import * as React from "react";
+import { useState } from "react";
 import { styled, alpha } from "@mui/material/styles";
 import { Link, useNavigate } from "react-router-dom";
 import {
@@ -27,7 +27,8 @@ import LoginIcon from "@mui/icons-material/Login";
 //our import
 import { useStateValue } from "../StateProvider";
 import { signOut } from "firebase/auth";
-import { auth } from "../firebase-config";
+import { auth, db } from "../firebase-config";
+import { collection, onSnapshot, query, where } from "firebase/firestore";
 // app bar functions readonly
 const Search = styled("div")(({ theme }) => ({
 	position: "relative",
@@ -70,6 +71,18 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 export default function Nav() {
 	const [{ basket, user }, dispatch] = useStateValue();
+	const [searchTerm, setSearchTerm] = useState("");
+	const searchQuery = query(
+		collection(db, "products"),
+		where("title", "==", searchTerm)
+	);
+	onSnapshot(() => {
+		let newArray = [];
+		searchQuery.doc.forEach((doc) => {
+			newArray.push({ ...doc.data(), id: doc.id });
+		});
+		console.log(newArray);
+	});
 	let navigate = useNavigate();
 	const handleLogout = async (e) => {
 		e.preventDefault();
@@ -82,8 +95,8 @@ export default function Nav() {
 		}
 	};
 	// mui code
-	const [anchorEl, setAnchorEl] = React.useState(null);
-	const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
+	const [anchorEl, setAnchorEl] = useState(null);
+	const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = useState(null);
 
 	const isMenuOpen = Boolean(anchorEl);
 	const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -227,12 +240,13 @@ export default function Nav() {
 						sx={{ display: { xs: "none", sm: "block" } }}>
 						Flipkart
 					</Typography>
-					<Search>
+					<Search value='chetan'>
 						<SearchIconWrapper>
 							<SearchIcon />
 						</SearchIconWrapper>
 						<StyledInputBase
 							placeholder='Search products'
+							value={searchTerm}
 							inputProps={{ "aria-label": "search" }}
 						/>
 					</Search>
