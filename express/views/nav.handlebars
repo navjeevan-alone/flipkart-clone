@@ -1,0 +1,18 @@
+{{#if showTitle}}
+<h1>Home</h1>
+{{/if}}
+<p>This is rendered from nav</p>
+<p>i am {{this.name}} </p>
+<p>My age {{this.age}} years </p>
+<ul>
+
+    {{#each stacks}}
+    <li> {{this}} </li>
+    {{/each}}
+</ul>
+<ul>
+
+    {{#each blogs}}
+    <li> {{this.title}} -{{this.content}}</li>
+    {{/each}}
+</ul>

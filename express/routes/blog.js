@@ -1,9 +1,12 @@
-import express from "express";
-import path from "path"
-import { fileURLToPath } from 'url';
-import { blogs } from "../data/blogs.js";
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// import express from "express";
+// import path from "path"
+// import { fileURLToPath } from 'url';
+// import { blogs } from "../data/blogs.js";
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = path.dirname(__filename);
+const path = require("path")
+const express = require("express")
+
 const router = express.Router()
 router.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "../views/index.html"))
@@ -38,4 +41,4 @@ router.get("/blog/:slug", (req, res) => {
     )
     res.send(myBlogData)
 })
-export default router;
+module.exports = router;
